@@ -1,15 +1,19 @@
 var data =  require("./fakeData");
 
 module.exports = function(req, res) {
-  
-    var name =  req.query.name;
+    const name =  req.query.name;
 
-    for(let i = 0; i < data.length;  i++) {
-        if(i.name == name) {
-            data[i] = null;
-        }
+    if (!name) {
+        return res.sendStatus(400);
     }
 
-    res.send("success");
+    const userIndex = data.findIndex(user => user.name.toLowerCase().includes(name.toLowerCase()));
 
+    if (userIndex === -1) {
+        return res.sendStatus(404);
+    } else {
+        data.splice(userIndex, 1);
+
+        return res.sendStatus(200);
+    }
 };

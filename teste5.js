@@ -1,9 +1,18 @@
-
+var data =  require("./fakeData");
 
 module.exports = function(req, res){
-    
-    var name =  req.query.name;
+    const name =  req.query.name;
 
-    res.send("Usuário " +  name  + "  foi lido 0 vezes.");
+    if (!name) {
+        return res.sendStatus(400);
+    }
 
+    const user = data.find(user => user.name.toLowerCase().includes(name.toLowerCase()));
+
+    if (user){
+        res.send(`Usuário ${user.name} foi lido ${user.readings || 0} vezes.`);
+    }
+    else {
+        return res.sendStatus(404);
+    }
 };

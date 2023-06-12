@@ -1,21 +1,37 @@
 var data =  require("./fakeData");
 
-const getUser = ( req, res, next ) => {
-    
-    var name =  req.query.name;
+const getUser = (req, res) => {
+    const name =  req.query.name;
 
-    for(let i = 0; i < data.length;  i++) {
-        if(i.name == name) {
-            res.send(data[i]);
-        }
+    if (!name) {
+        return res.sendStatus(400);
     }
 
+    const user = data.find(user => user.name.toLowerCase().includes(name.toLowerCase()));
+
+    if (user) {
+        user.readings = user?.readings + 1 || 1
+
+        return res.send({
+            id: user.id,
+            name: user.name,
+            job: user.job,
+        });
+    } else {
+        return res.sendStatus(404);
+    }
 };
 
-const getUsers = ( req, res, next ) => {
-    
-    res.send(data);
-    
+const getUsers = (_, res) => {
+    return res.send(data.map(user => {
+        user.readings = user?.readings + 1 || 1
+
+        return {
+            id: user.id,
+            name: user.name,
+            job: user.job,
+        }
+    }));
 };
 
 module.exports = {
